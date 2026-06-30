@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Faculty+Glyphic&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Faculty Glyphic", sans-serif;
+  --font-serif: "Bodoni Moda", serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-brand-rust: #D16436;
+  --color-brand-dark: #121313;
+  --color-brand-light: #FBFBFA;
+  --color-brand-gray: #7F8484;
+  --color-brand-steel: #EAEAEA;
+  --color-brand-red: #8B1A1A;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.animate-scan {
+  animation: scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Custom scrollbar matching industrial aesthetics */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-brand-light);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-dark);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-rust);
+}
+
+/* Rich text defaults for WYSIWYG content */
+strong, b {
+  font-weight: 700;
+}
+em, i {
+  font-style: italic;
+}
+u {
+  text-decoration: underline;
+}
+ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
