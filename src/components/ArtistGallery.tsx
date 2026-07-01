@@ -54,7 +54,7 @@ const WORKSHOP_DETAILS: Record<string, {
     ]
   },
   "artist-3": {
-    workspaceImage: "https://images.unsplash.com/photo-1565192647048-f997ded87958?q=80&w=1200",
+    workspaceImage: "https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?q=80&w=1200",
     tools: ["Tour de potier traditionnel Shimpo", "Estèques en bois de buis", "Four à bois artisanal anagama", "Pyromètre optique"],
     materials: ["Grès de Puisaye brut", "Porcelaine de Limoges", "Émaux de cendres de hêtre locale", "Sables de Loire récupérés"],
     currentProject: "Cuisson collective de 72 heures au four à bois anagama partagé.",

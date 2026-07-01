@@ -49,7 +49,7 @@ const WORKSHOP_METADATA: Record<string, {
     themeBg: "bg-blue-500"
   },
   "artist-3": {
-    coverImage: "https://images.unsplash.com/photo-1565192647048-f997ded87958?q=80&w=2000",
+    coverImage: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?q=80&w=2000",
     tools: ["Tour de potier Shimpo RK-3D", "Estèques en buis", "Four anagama traditionnel à bois", "Seringues à émail", "Estampes de texture"],
     materials: ["Grès de Puisaye brut", "Porcelaine de Limoges", "Émaux de cendres de hêtre locale", "Sables de Loire", "Argile ferrugineuse sauvage"],
     currentProject: "Cuisson collective de 72 heures non-stop au four à bois anagama partagé du Hangar C.",

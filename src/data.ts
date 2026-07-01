@@ -100,7 +100,7 @@ export const ARTISTS: Artist[] = [
     bio: "Nolwenn façonne des grès bruts et des porcelaines translucides aux formes asymétriques. Elle récupère des résidus de combustion industrielle du site pour concevoir ses propres émaux haute température.",
     hangarId: "hangar-b",
     contactEmail: "n.dubreuil@morinerie.art",
-    featuredWorkUrl: "https://images.unsplash.com/photo-1565192647048-f997ded87958?auto=format&fit=crop&q=80&w=800",
+    featuredWorkUrl: "https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?auto=format&fit=crop&q=80&w=800",
     tags: ["Grès sauvage", "Four Anagama", "Céramique", "Émail de cendres"],
     works: [
       {
@@ -108,7 +108,7 @@ export const ARTISTS: Artist[] = [
         title: "Érosion Silencieuse — Série Crémations",
         year: 2024,
         medium: "Grès de Puisaye, émail de cendres et scories ferroviaires",
-        imageUrl: "https://images.unsplash.com/photo-1565192647048-f997ded87958?auto=format&fit=crop&q=80&w=800",
+        imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&q=80&w=800",
         description: "Vase sculptural modelé à la main, cuit à 1280°C dans un four à bois, dont la texture rugueuse rappelle l'écorce et le charbon fondu."
       }
     ]
