@@ -16,28 +16,28 @@ export interface HeroSlide {
 
 const DEFAULT_SLIDES: HeroSlide[] = [
   {
-    image: "",
+    image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&q=80&w=1920",
     sub: "Événement Annuel — Saint-Pierre-des-Corps",
     title: "Portes Ouvertes\nÉdition 2026",
     desc: "Plongez au cœur de l'effervescence créative : 70 ateliers ouverts, expositions monumentales, performances et rencontres privilégiées avec les artistes.",
     code: "PORTE_OUVERTE_2026",
   },
   {
-    image: "",
+    image: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&q=80&w=1920",
     sub: "Friche Industrielle d'exception — Saint-Pierre-des-Corps",
     title: "La Mémoire\n& Le Geste",
     desc: "Ancien centre de chaudronnerie lourde de la SNCF métamorphosé en pôle de création autonome.",
     code: "SNCF_KP_192.4",
   },
   {
-    image: "",
+    image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=1920",
     sub: "70 Ateliers de Création brute",
     title: "Faire Parler\nLa Matière",
     desc: "Où l'acier, le bois noble, le verre et la porcelaine fusionnent dans la brutalité du béton historique.",
     code: "COOP_MORINERIE_37",
   },
   {
-    image: "",
+    image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80&w=1920",
     sub: "Une Cathédrale Lumineuse",
     title: "L'Espace\net Le Silence",
     desc: "15 000 m² libérés pour donner aux artistes plasticiens, fondeurs et sculpteurs l'audace du format monumental.",
