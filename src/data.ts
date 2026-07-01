@@ -58,6 +58,14 @@ export const ARTISTS: Artist[] = [
         medium: "Fer forgé et fil d'acier oxydé",
         imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuA04ey65KefAN9Ma0F501HgRLTk7wAcoGVLfeUxDY0EYN7qyqyTjekL-hZJbi7fZqlhw22p8CBP6zTtYftw_ucR_P3VRI5ZdMFsHMzn2vF_wIEfhq35J38r_8uI_4Qnc2-1vrhSidWlxAQ7h5TlPw0xa8eGzuhqxJ8jD68FwJieY-IlPy4KzeAMl0FUPkCRpR7ccdMAOPLQpJvP5_skycW4ZaDyy3MJm64j4dgfFnFQyJ7zk16Xhy00kCwDyE6dyHMdGR_CJrF8LsC7",
         description: "Dentelle métallique explorant la dégradation naturelle induite par le climat des ateliers ouverts au vent."
+      },
+      {
+        id: "a1-w3",
+        title: "Carcans d'Acier",
+        year: 2025,
+        medium: "Fer forgé et tôle rivetée",
+        imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
+        description: "Structure en fer brut issue du démantèlement d'un ancien portique SNCF, soudée et patinée pour évoquer la musculature d'un colosse endormi."
       }
     ]
   },
@@ -88,6 +96,14 @@ export const ARTISTS: Artist[] = [
         medium: "Pigments naturels et liant acrylique",
         imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAeH33brKcVAv2tQHJo3ZQPlOJCvfi0kwQAKty2viR2aRx4a8-lhv5Iv0ODUBPk26hGhSUHKGJRo2zPx_tklkr_WHAtYFjIBQTkktmyolo9C9f5xGP0qPJ-PscGkuTPLJmI1Gna2X6Xc12YhYx9WPxeBuWFuAHNfvZ2OukP-YuiFPiwueSJW3UJdreHk1HTbKh6HvxlT6I1r5750nJT1JL7B-luWgLTOl0OZ2BNvrN85aUujQ682PFMUh_G3h4pt-BVehhj53Gpr625",
         description: "Incrustation de limaille de fer collectée sur le sol des ateliers, créant une œuvre en constante auto-oxydation."
+      },
+      {
+        id: "a2-w3",
+        title: "Fulgurations II",
+        year: 2024,
+        medium: "Huile et pigments sur toile",
+        imageUrl: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=800",
+        description: "Éclats de lumière traversant les verrières brisées du Hangar C, capturés par superpositions de glacis translucides et de matières minérales."
       }
     ]
   },
@@ -110,6 +126,22 @@ export const ARTISTS: Artist[] = [
         medium: "Grès de Puisaye, émail de cendres et scories ferroviaires",
         imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&q=80&w=800",
         description: "Vase sculptural modelé à la main, cuit à 1280°C dans un four à bois, dont la texture rugueuse rappelle l'écorce et le charbon fondu."
+      },
+      {
+        id: "a3-w2",
+        title: "Coupe Tellurique",
+        year: 2025,
+        medium: "Porcelaine émaillée et oxydes de fer",
+        imageUrl: "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&q=80&w=800",
+        description: "Coupe aux courbes organiques évoquant les strates géologiques, émaillée à base de résidus de combustion du site ferroviaire."
+      },
+      {
+        id: "a3-w3",
+        title: "Cratère des Origines",
+        year: 2024,
+        medium: "Grès chamotté brut et oxydes naturels",
+        imageUrl: "https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?auto=format&fit=crop&q=80&w=800",
+        description: "Grande pièce sculpturale aux reliefs accidentés, cuite en four anagama pendant 72 heures, dont la surface craquelée évoque la lave refroidie."
       }
     ]
   },
@@ -132,6 +164,22 @@ export const ARTISTS: Artist[] = [
         medium: "Plateau de noyer massif, piètement en fer brut patiné",
         imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAeH33brKcVAv2tQHJo3ZQPlOJCvfi0kwQAKty2viR2aRx4a8-lhv5Iv0ODUBPk26hGhSUHKGJRo2zPx_tklkr_WHAtYFjIBQTkktmyolo9C9f5xGP0qPJ-PscGkuTPLJmI1Gna2X6Xc12YhYx9WPxeBuWFuAHNfvZ2OukP-YuiFPiwueSJW3UJdreHk1HTbKh6HvxlT6I1r5750nJT1JL7B-luWgLTOl0OZ2BNvrN85aUujQ682PFMUh_G3h4pt-BVehhj53Gpr625",
         description: "Une console épurée sublimant les faiblesses naturelles du bois, stabilisées par des inserts papillons en acier."
+      },
+      {
+        id: "a4-w2",
+        title: "Bibliothèque Ouverte",
+        year: 2025,
+        medium: "Chêne massif et acier brossé",
+        imageUrl: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&q=80&w=800",
+        description: "Bibliothèque asymétrique inspirée des charpentes ferroviaires du Hangar B, mêlant le chêne local à des étagères en acier riveté."
+      },
+      {
+        id: "a4-w3",
+        title: "Table d'Atelier",
+        year: 2024,
+        medium: "Noyer cendré et résine époxy",
+        imageUrl: "https://images.unsplash.com/photo-1540206395-68808572332f?auto=format&fit=crop&q=80&w=800",
+        description: "Table massive aux lignes épurées, mettant en valeur les cernes et les noeuds naturels du noyer centenaire, stabilisée par un insert en résine noire."
       }
     ]
   },
