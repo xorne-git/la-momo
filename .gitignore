@@ -8,3 +8,4 @@ coverage/
 !.env.example
 morinerie.db*
 server/media/
+.deepseek/

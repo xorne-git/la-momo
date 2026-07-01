@@ -60,10 +60,10 @@ Uploads rangés par user : `server/media/users/<userId>/`. Noms originaux dans `
 
 ---
 
-## Bugs connus (vérifiés, ne pas rediagnostiquer)
+## Bugs résolus
 
-1. **Sauvegarde admin → navigation intempestive** : après "Enregistrer" dans `ActualitesEdit` ou `HeroEdit`, l'utilisateur est redirigé vers le slider home au lieu de rester sur la page admin. Cause probable : setPending() écrit dans localStorage → scroll handler d'App.tsx change activeSection.
-2. **WysiwygEditor se ferme à la première frappe** dans `ActualitesEdit` : `onChange` est appelé à chaque input mais ferme aussi l'éditeur. Une prop `onSave` existe séparément mais n'est pas utilisée correctement.
+1. **Sauvegarde admin → navigation intempestive** : après "Enregistrer" dans `ActualitesEdit` ou `HeroEdit`, l'utilisateur était redirigé vers le slider home au lieu de rester sur la page admin. Corrigé.
+2. **WysiwygEditor se ferme à la première frappe** dans `ActualitesEdit` : `onChange` était appelé à chaque input et fermait aussi l'éditeur. Corrigé.
 
 ---
 

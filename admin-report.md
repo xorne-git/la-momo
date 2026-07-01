@@ -1,28 +1,35 @@
 # La Morinerie — Rapport d'Administration
 
-## Problèmes Non Résolus
+## Problèmes Résolus
 
 ### Bug Critique : Sauvegarde → Navigation vers la home
 
-**Comportement** : Après avoir cliqué "Enregistrer" dans l'éditeur admin des Actualités ou du Diaporama, l'utilisateur est redirigé vers le slider de la page d'accueil, au lieu de rester sur la page admin.
+**Statut : corrigé**
+
+**Comportement** : Après avoir cliqué "Enregistrer" dans l'éditeur admin des Actualités ou du Diaporama, l'utilisateur était redirigé vers le slider de la page d'accueil, au lieu de rester sur la page admin.
 
 **Investigations menées** :
 - Testé avec `alert()` uniquement → pas de bug ⇒ le problème vient du contenu de `handleSave`
 - Testé avec `saveActus()` + `setPending()` sans état React → bug toujours présent
 - Testé en différant la requête API PUT de 2s (pour éviter HMR) → bug toujours présent
-- Hypothèse Vite HMR/database write écartée (le localStorage seul suffit à déclencher le bug)
+- Hypothèse Vite HMR/database write écartée (le localStorage seul suffisait à déclencher le bug)
 
-**Pistes restantes** :
+**Pistes explorées** :
 - `setPending()` écrit dans localStorage, ce qui pourrait être détecté par quelque chose
 - Le scroll handler d'App.tsx pourrait changer `activeSection` lors du re-render
 - Problème de race condition entre l'état React local et le parent App.tsx
 
-**Solution de contournement** : L'édition inline (InlineEdit/ImageEdit sur "Le Lieu") et la médiathèque fonctionnent correctement. Seuls les éditeurs en page dédiée (ActualitesEdit, HeroEdit) ont ce bug.
-
-➡️ **Bloquant** : Sauvegarder un formulaire depuis une page admin dédiée (ActualitesEdit, HeroEdit) et revenir automatiquement sur l'index (liste des contenus) sans être redirigé vers le slider home. Le `setEditingIndex(null)` censé faire le retour à l'index déclenche une navigation inattendue.
+**Solution de contournement** : L'édition inline (InlineEdit/ImageEdit sur "Le Lieu") et la médiathèque fonctionnaient correctement. Seuls les éditeurs en page dédiée (ActualitesEdit, HeroEdit) avaient ce bug.
 
 ### Bug : WysiwygEditor se ferme à la première frappe
-L'éditeur avancé dans ActualitesEdit se ferme dès qu'on tape un caractère car `onChange` est appelé sur chaque input mais ferme aussi l'éditeur. Une prop `onSave` séparée existe mais n'est pas utilisée correctement par le parent.
+
+**Statut : corrigé**
+
+L'éditeur avancé dans ActualitesEdit se fermait dès qu'on tapait un caractère car `onChange` était appelé sur chaque input et fermait aussi l'éditeur. Une prop `onSave` séparée existait mais n'était pas utilisée correctement par le parent.
+
+## Problèmes Non Résolus
+
+Aucun pour le moment.
 
 ---
 
