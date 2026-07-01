@@ -509,12 +509,10 @@ export default function App() {
 
           </div>
 
-          {!demoMode && (
-          /* Sub-section: Plan */
+          {/* Sub-section: Plan */}
           <div className="border-t border-brand-dark/10 pt-16 mt-16" id="plan-section">
             <HangarMap onArtistSelect={handleSelectArtistFromMap} />
           </div>
-          )}
 
           {/* Sub-section: Histoire */}
           <div className="border-t border-brand-dark/10 pt-16 mt-16" id="histoire-section">
