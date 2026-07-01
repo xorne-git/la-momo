@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Save, Plus, Pencil, Trash2, ArrowLeft } from "lucide-react";
-import ImagePicker from "./ImagePicker";
+import ImagePicker from "../admin-core/ImagePicker";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "../utils/toast";
 

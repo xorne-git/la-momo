@@ -4,7 +4,7 @@
 
 ### Bug Critique : Sauvegarde → Navigation vers la home
 
-**Statut : corrigé**
+**Statut : corrigé** (avant refacto)
 
 **Comportement** : Après avoir cliqué "Enregistrer" dans l'éditeur admin des Actualités ou du Diaporama, l'utilisateur était redirigé vers le slider de la page d'accueil, au lieu de rester sur la page admin.
 
@@ -23,9 +23,52 @@
 
 ### Bug : WysiwygEditor se ferme à la première frappe
 
-**Statut : corrigé**
+**Statut : corrigé** (avant refacto)
 
 L'éditeur avancé dans ActualitesEdit se fermait dès qu'on tapait un caractère car `onChange` était appelé sur chaque input et fermait aussi l'éditeur. Une prop `onSave` séparée existait mais n'était pas utilisée correctement par le parent.
+
+### Bug : Serveur Express — uuid ESM → CJS
+
+**Statut : corrigé** (2026-07-01)
+
+`uuid@14` est ESM-only et cassait `require()` dans les fichiers CommonJS du serveur. Remplacé par `crypto.randomUUID()` natif de Node.js (disponible depuis Node 14.17+) dans :
+- `server/db.cjs`
+- `server/routes/auth.cjs`
+- `server/routes/media.cjs`
+- `server/routes/permissions.cjs`
+
+`uuid` et `@types/uuid` retirés du `package.json`.
+
+---
+
+## Fonctionnalités Implémentées
+
+### ✅ Mode démo (2026-07-01)
+
+- Création de `src/utils/demo.ts` — flag `demoMode` via `VITE_DEMO_MODE`
+- `.env` avec `VITE_DEMO_MODE=true`
+- Blocage des hash URLs admin dans App.tsx
+- Blocage de la navigation vers les pages admin dans `handleNavigate()`
+- Caché du lien « Connexion Admin / Artiste » dans le footer
+- Caché de la section Plan (HangarMap + bouton + lien footer)
+- Tree-shaking complet du code admin par Vite en production
+
+### ✅ Déploiement (2026-07-01)
+
+- Copie du projet vers `/var/www/xorne/la-morinerie/`
+- Build de production
+- Installation et configuration du certificat HTTPS (Let's Encrypt via Certbot)
+- Service systemd `la-morinerie-api.service` pour Express
+- Vhost Apache avec proxy `/api` et `/media` → Express
+
+### ✅ Refactoring structurel (2026-07-01)
+
+- Création de `src/admin-core/` — 10 composants réutilisables (AdminLayout, InlineEdit, ImageEdit, ImagePicker, SliderEdit, MediaLibrary, WysiwygEditor, TagEditor, AdminBreadcrumb, EditContext)
+- Migration de `src/admin/` vers les nouveaux chemins (14 fichiers modifiés)
+- Création de `AdminLayout.tsx` — wrapper admin unique qui élimine ~100 lignes de duplication dans App.tsx
+- App.tsx : passage de 9 blocs `if/return` à un `switch` unique (878 → 724 lignes)
+
+---
 
 ## Problèmes Non Résolus
 
@@ -38,7 +81,7 @@ Aucun pour le moment.
 | Technologie | Version | Usage |
 |---|---|---|
 | React | 19 | UI Framework |
-| TypeScript | ~5.7 | Typage |
+| TypeScript | ~5.8 | Typage |
 | Vite | 6 | Build/Dev Server |
 | Tailwind CSS | 4 | Styles atomiques |
 | Framer Motion (motion) | 12 | Animations |
@@ -46,7 +89,7 @@ Aucun pour le moment.
 | Express | 4 | API backend |
 | better-sqlite3 | Latest | Base SQLite |
 | bcryptjs | Latest | Hash mots de passe |
-| react-hot-toast | 2.x | Notifications (utilisé dans HeroEdit monté) |
+| react-hot-toast | 2.x | Notifications |
 
 ---
 
@@ -60,6 +103,8 @@ Aucun pour le moment.
 - [x] AdminBreadcrumb pour les pages admin
 - [x] Badge admin (bas droite) + bordure gauche fine
 - [x] Pages admin protégées par rôle
+- [x] Gestion des groupes et permissions granulaires (14 ressources)
+- [x] Gestion des comptes utilisateurs
 
 ### Édition de Contenu
 - [x] WysiwygEditor (contentEditable, zéro dépendance)
@@ -69,6 +114,8 @@ Aucun pour le moment.
 - [x] SliderEdit (images du Lieu avec DnD, lightbox)
 - [x] HeroEdit (diaporama avec liste/édition, ajout/suppression)
 - [x] ActualitesEdit (actualités avec liste/édition, ajout/suppression)
+- [x] ArtistSliderEdit (espace artiste : slides, blog, tags)
+- [x] Gestion des tags (pool global)
 
 ### Médiathèque
 - [x] Upload fichier avec compression automatique (> 10 Mo → redimensionné)
@@ -97,36 +144,51 @@ Aucun pour le moment.
 - [x] Formulaire de contact (simulation)
 - [x] Design responsive mobile/desktop
 - [x] Mode "pro" toggle
+- [x] Mode démo (VITE_DEMO_MODE)
 
 ---
 
-## Structure des Fichiers Admin
+## Structure des Fichiers (refacto 2026-07-01)
 
 ```
-src/admin/
-├── AdminBreadcrumb.tsx      — Fil d'ariane
-├── AdminSidebar.tsx          — Menu latéral
-├── ImageEdit.tsx             — Édition image inline
-├── ImagePicker.tsx           — Composant picker réutilisable
-├── InlineEdit.tsx            — Édition texte inline
-├── MediaLibrary.tsx          — Médiathèque complète
-├── SliderEdit.tsx            — Édition images du Lieu
-├── WysiwygEditor.tsx         — Éditeur HTML
-├── HeroEdit.tsx              — Éditeur diaporama
-└── ActualitesEdit.tsx        — Éditeur actualités
-
-src/context/
-├── AuthContext.tsx            — Contexte authentification
-└── ToastContext.tsx           — Ancien toast (non utilisé)
-
-src/utils/
-├── pendingMsg.ts             — Système de notification localStorage
-├── toast.ts                  — Ancien toast DOM (non utilisé)
-└── imageOptimizer.ts         — Compression d'images
-
-src/components/
-├── PendingMessageDisplay.tsx  — Affichage notifications
-└── AdminBadge.tsx             — Badge admin/artiste
+src/
+├── admin-core/              # Composants réutilisables (portables)
+│   ├── AdminLayout.tsx       # Layout admin (sidebar + navbar + breadcrumb + toaster)
+│   ├── AdminBreadcrumb.tsx   # Fil d'ariane
+│   ├── InlineEdit.tsx        # Édition texte inline
+│   ├── ImageEdit.tsx         # Édition image inline
+│   ├── ImagePicker.tsx       # Composant picker réutilisable
+│   ├── SliderEdit.tsx        # Édition images du Lieu
+│   ├── MediaLibrary.tsx      # Médiathèque complète
+│   ├── WysiwygEditor.tsx     # Éditeur HTML
+│   ├── TagEditor.tsx         # Éditeur de tags
+│   └── EditContext.tsx       # Contexte d'édition
+│
+├── admin/                    # Pages site-specific
+│   ├── AdminSidebar.tsx      # Menu latéral
+│   ├── HeroEdit.tsx          # Éditeur diaporama
+│   ├── ActualitesEdit.tsx    # Éditeur actualités
+│   ├── ArtistSliderEdit.tsx  # Espace artiste
+│   ├── ArtistBlogEdit.tsx    # Blog artiste
+│   ├── GestionComptes.tsx    # Gestion des comptes
+│   ├── GestionGroupes.tsx    # Groupes & droits
+│   ├── GestionTags.tsx       # Tags
+│   └── MonCompte.tsx         # Profil utilisateur
+│
+├── components/              # Composants publics
+│   ├── PendingMessageDisplay.tsx
+│   └── AdminBadge.tsx
+│
+├── context/
+│   └── AuthContext.tsx       # Contexte authentification
+│
+└── utils/
+    ├── demo.ts               # Flag mode démo
+    ├── pendingMsg.ts          # Système notification localStorage
+    ├── toast.ts               # Ancien toast DOM (non utilisé)
+    ├── imageOptimizer.ts      # Compression d'images
+    ├── tags.ts                # Gestion des tags
+    └── sortNews.ts            # Tri des actualités
 ```
 
 ---
@@ -140,3 +202,6 @@ src/components/
 - **Images > 10 Mo** : redimensionnées à 2048px max, qualité ajustée
 - **Images < 10 Mo** : qualité 0.95, pas de perte visible, EXIF supprimé
 - **Noms originaux** : stockés dans `server/media/.filenames.json`
+- **AdminLayout** : prend `section`, `breadcrumbLabel`, `children`, `showToaster?`, `onNavigate`, `isProMode`, `onToggleProMode`, `lastFrontend`
+- **Routing App.tsx** : switch sur `activeSection` au lieu de 9 if/return
+- **`crypto.randomUUID()`** : remplace `uuid` pour compatibilité CJS

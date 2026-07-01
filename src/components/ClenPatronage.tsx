@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ArrowUpRight, Building2, ShieldCheck, HeartHandshake, Eye } from "lucide-react";
-import InlineEdit from "../admin/InlineEdit";
+import InlineEdit from "../admin-core/InlineEdit";
 
 export default function ClenPatronage() {
   return (

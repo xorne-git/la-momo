@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import { AuthProvider } from './context/AuthContext';
-import { EditProvider } from './admin/EditContext';
+import { EditProvider } from './admin-core/EditContext';
 import PendingMessageDisplay from './components/PendingMessageDisplay';
 import './index.css';
 

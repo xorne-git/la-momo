@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { Toaster } from "react-hot-toast";
 import { consumePending } from "./utils/pendingMsg";
+import { demoMode } from "./utils/demo";
 import { motion } from "motion/react";
 import Navbar from "./components/Navbar";
 import MorinerieLogo from "./components/MorinerieLogo";
@@ -18,12 +19,12 @@ import { ARTISTS } from "./data";
 import { Hammer, Users, Calendar, ArrowRight, ArrowUp, Mail, ShieldAlert, LogIn, LogOut } from "lucide-react";
 import lieuKhara from "./assets/images/khara-woods-KR84RpMCb0w-unsplash.jpg";
 import { useAuth } from "./context/AuthContext";
-import InlineEdit from "./admin/InlineEdit";
-import ImageEdit from "./admin/ImageEdit";
-import SliderEdit from "./admin/SliderEdit";
-import MediaLibrary from "./admin/MediaLibrary";
+import InlineEdit from "./admin-core/InlineEdit";
+import ImageEdit from "./admin-core/ImageEdit";
+import SliderEdit from "./admin-core/SliderEdit";
+import MediaLibrary from "./admin-core/MediaLibrary";
+import AdminLayout from "./admin-core/AdminLayout";
 import AdminSidebar from "./admin/AdminSidebar";
-import AdminBreadcrumb from "./admin/AdminBreadcrumb";
 import HeroEdit, { loadHeroSlides, fetchHeroSlidesFromApi } from "./admin/HeroEdit";
 import ActualitesEdit from "./admin/ActualitesEdit";
 import ArtistSliderEdit from "./admin/ArtistSliderEdit";
@@ -46,6 +47,8 @@ const TOAST_OPTIONS = {
 
 export default function App() {
   const [activeSection, setActiveSection] = useState(() => {
+    // En mode démo, ignorer tous les hash admin
+    if (demoMode) return "top";
     // Check if we're in media admin page (from sidebar)
     if (window.location.hash === "#media") return "media";
     if (window.location.hash === "#hero") return "hero";
@@ -209,6 +212,8 @@ export default function App() {
 
   // Smooth scroll helper
   const handleNavigate = (sectionId: string) => {
+    // En mode démo, ignorer toute navigation vers une page admin
+    if (demoMode && adminSections.includes(sectionId)) return;
     if (activeSection !== sectionId) prevSectionRef.current = activeSection;
     if (frontendSections.includes(sectionId)) {
       lastFrontendRef.current = sectionId; setLastFrontend(sectionId);
@@ -304,184 +309,30 @@ export default function App() {
     }
   };
 
-  // Media library page — full screen admin
-  if (activeSection === "media") {
-    return (
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="media" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: "Médiathèque" }]}
-          />
-          <MediaLibrary />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Hero editor page — admin
-  if (activeSection === "hero") {
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="hero" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: "Diaporama" }]}
-          />
-          <HeroEdit />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
-  }
-
-  // Actualités editor page — admin (only via sidebar admin-actualites)
-  if (activeSection === "admin-actualites") {
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="admin-actualites" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: "Actualités" }]}
-          />
-          <ActualitesEdit onViewClick={() => handleNavigate("actualites")} />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
-  }
-
-  // Artiste slider editor page — admin
-  if (activeSection === "artist-slider") {
-    const tabLabel = artistTab === "blog" ? "Blog" : artistTab === "tags" ? "Tags" : artistTab === "hero" ? "Héro" : artistTab === "vignette" ? "Vignette" : "Slides";
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="artist-slider" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: `Espace des artistes — ${tabLabel}` }]}
-          />
-          <ArtistSliderEdit onTabChange={setArtistTab} />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
-  }
-
-  // Mon espace — admin's own artist page editor
-  if (activeSection === "mon-espace") {
-    const tabLabel = artistTab === "blog" ? "Blog" : artistTab === "tags" ? "Tags" : artistTab === "hero" ? "Héro" : artistTab === "vignette" ? "Vignette" : "Slides";
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="mon-espace" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: `Mon espace — ${tabLabel}` }]}
-          />
-          <ArtistSliderEdit onTabChange={setArtistTab} preselectArtistId={currentUser?.artistId || null} />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
-  }
-
-  // Mon compte — user profile editor
-  if (activeSection === "mon-compte") {
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="mon-compte" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: "Mon compte" }]}
-          />
-          <MonCompte />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
-  }
-
-  // Gestion des comptes — admin only
-  if (activeSection === "gestion-comptes") {
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="gestion-comptes" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: "Gestion des comptes" }]}
-          />
-          <GestionComptes />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
-  }
-
-  // Groupes & droits — admin only
-  if (activeSection === "groupes-droits") {
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="groupes-droits" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: "Groupes & droits" }]}
-          />
-          <GestionGroupes />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
-  }
-
-  // Tags — admin only
-  if (activeSection === "tags") {
-    return (
-      <>
-      <div className="bg-brand-light text-brand-dark min-h-screen font-sans flex border-l-2 border-brand-rust/20">
-        <AdminSidebar onNavigate={handleNavigate} lastFrontend={lastFrontend} />
-        <div className="flex-1 min-w-0">
-          <Navbar activeSection="tags" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} solid />
-          <div className="pt-20">
-          <AdminBreadcrumb
-            items={[{ label: "Tags" }]}
-          />
-          <GestionTags />
-          </div>
-        </div>
-      </div>
-      <Toaster position="top-center" toastOptions={TOAST_OPTIONS} />
-      </>);
+  // ─── Admin pages ───────────────────────────────────
+  switch (activeSection) {
+    case "media":
+      return <AdminLayout section="media" breadcrumbLabel="Médiathèque" showToaster={false} onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><MediaLibrary /></AdminLayout>;
+    case "hero":
+      return <AdminLayout section="hero" breadcrumbLabel="Diaporama" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><HeroEdit /></AdminLayout>;
+    case "admin-actualites":
+      return <AdminLayout section="admin-actualites" breadcrumbLabel="Actualités" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><ActualitesEdit onViewClick={() => handleNavigate("actualites")} /></AdminLayout>;
+    case "artist-slider": {
+      const tabLabel = artistTab === "blog" ? "Blog" : artistTab === "tags" ? "Tags" : artistTab === "hero" ? "Héro" : artistTab === "vignette" ? "Vignette" : "Slides";
+      return <AdminLayout section="artist-slider" breadcrumbLabel={`Espace des artistes — ${tabLabel}`} onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><ArtistSliderEdit onTabChange={setArtistTab} /></AdminLayout>;
+    }
+    case "mon-espace": {
+      const tabLabel = artistTab === "blog" ? "Blog" : artistTab === "tags" ? "Tags" : artistTab === "hero" ? "Héro" : artistTab === "vignette" ? "Vignette" : "Slides";
+      return <AdminLayout section="mon-espace" breadcrumbLabel={`Mon espace — ${tabLabel}`} onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><ArtistSliderEdit onTabChange={setArtistTab} preselectArtistId={currentUser?.artistId || null} /></AdminLayout>;
+    }
+    case "mon-compte":
+      return <AdminLayout section="mon-compte" breadcrumbLabel="Mon compte" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><MonCompte /></AdminLayout>;
+    case "gestion-comptes":
+      return <AdminLayout section="gestion-comptes" breadcrumbLabel="Gestion des comptes" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><GestionComptes /></AdminLayout>;
+    case "groupes-droits":
+      return <AdminLayout section="groupes-droits" breadcrumbLabel="Groupes & droits" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><GestionGroupes /></AdminLayout>;
+    case "tags":
+      return <AdminLayout section="tags" breadcrumbLabel="Tags" onNavigate={handleNavigate} isProMode={isProMode} onToggleProMode={handleToggleProMode} lastFrontend={lastFrontend}><GestionTags /></AdminLayout>;
   }
 
   if (activeArtistPage) {
@@ -643,6 +494,7 @@ export default function App() {
                 </div>
               </div>
 
+              {!demoMode && (
               <div className="pt-4 flex gap-6">
                 <button
                   onClick={() => handleNavigate("plan-section")}
@@ -652,14 +504,17 @@ export default function App() {
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
                 </button>
               </div>
+              )}
             </div>
 
           </div>
 
-          {/* Sub-section: Plan */}
+          {!demoMode && (
+          /* Sub-section: Plan */
           <div className="border-t border-brand-dark/10 pt-16 mt-16" id="plan-section">
             <HangarMap onArtistSelect={handleSelectArtistFromMap} />
           </div>
+          )}
 
           {/* Sub-section: Histoire */}
           <div className="border-t border-brand-dark/10 pt-16 mt-16" id="histoire-section">
@@ -734,11 +589,13 @@ export default function App() {
                     Actualités &amp; Événements
                   </button>
                 </li>
+                {!demoMode && (
                 <li>
                   <button onClick={() => handleNavigate("plan-section")} className="hover:text-brand-rust transition-colors text-left cursor-pointer">
                     Le Plan des Ateliers
                   </button>
                 </li>
+                )}
                 <li>
                   <button onClick={() => handleNavigate("lieu")} className="hover:text-brand-rust transition-colors text-left cursor-pointer">
                     Histoire &amp; Mécénat CLEN
@@ -772,7 +629,7 @@ export default function App() {
               <span>•</span>
               <span>Anciennes Friches SNCF</span>
               <span>•</span>
-              {isAuthenticated ? (
+              {demoMode ? null : isAuthenticated ? (
                 <button
                   onClick={(e) => { e.preventDefault(); logout(); }}
                   className="hover:text-brand-rust transition-all cursor-pointer font-bold uppercase tracking-widest text-brand-light flex items-center gap-1.5"

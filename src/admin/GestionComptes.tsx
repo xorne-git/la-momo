@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Save, ArrowLeft, User as UserIcon, Shield, Paintbrush, Calendar, Trash2, Phone, Plus, X, Check } from "lucide-react";
 import { ARTISTS } from "../data";
-import ImagePicker from "./ImagePicker";
+import ImagePicker from "../admin-core/ImagePicker";
 import { toast } from "../utils/toast";
 
 interface Compte {

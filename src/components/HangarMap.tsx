@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { ARTISTS } from "../data";
 import { Artist } from "../types";
 import { Layers, ArrowRight, Hammer, Info, MapPin, X } from "lucide-react";
-import InlineEdit from "../admin/InlineEdit";
+import InlineEdit from "../admin-core/InlineEdit";
 import { useAuth } from "../context/AuthContext";
 
 interface HangarMapProps {

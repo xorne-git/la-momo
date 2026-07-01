@@ -1,6 +1,6 @@
 import { TIMELINE } from "../data";
 import { History, Milestone, Compass, Activity } from "lucide-react";
-import InlineEdit from "../admin/InlineEdit";
+import InlineEdit from "../admin-core/InlineEdit";
 
 export default function HistoryTimeline() {
   return (

@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { ARTISTS } from "../data";
 import { Artist, Artwork } from "../types";
 import { Search, SlidersHorizontal, ArrowRight, X, Mail, Maximize2, Tag, Hammer, Package, MessageSquare, Plus, Clock, Compass, ShieldCheck } from "lucide-react";
-import InlineEdit from "../admin/InlineEdit";
+import InlineEdit from "../admin-core/InlineEdit";
 import { getAllGlobalTags, getDisciplines } from "../utils/tags";
 
 interface ArtistGalleryProps {

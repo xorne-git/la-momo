@@ -5,9 +5,9 @@ import { toast } from "../utils/toast";
 import { NewsItem } from "../types";
 import { NEWS_ITEMS } from "../data";
 import { sortNewsByDate } from "../utils/sortNews";
-import WysiwygEditor from "./WysiwygEditor";
-import ImagePicker from "./ImagePicker";
-import TagEditor from "./TagEditor";
+import WysiwygEditor from "../admin-core/WysiwygEditor";
+import ImagePicker from "../admin-core/ImagePicker";
+import TagEditor from "../admin-core/TagEditor";
 import { getAllGlobalTags } from "../utils/tags";
 
 const ACTU_STORAGE_KEY = "morinerie_actualites";

@@ -4,9 +4,9 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "../utils/toast";
 import type { ArtistBlogPost, Artist } from "../types";
 import { ARTISTS } from "../data";
-import ImagePicker from "./ImagePicker";
-import WysiwygEditor from "./WysiwygEditor";
-import TagEditor from "./TagEditor";
+import ImagePicker from "../admin-core/ImagePicker";
+import WysiwygEditor from "../admin-core/WysiwygEditor";
+import TagEditor from "../admin-core/TagEditor";
 import { getAllGlobalTags } from "../utils/tags";
 
 function loadPosts(artistId: string): ArtistBlogPost[] {

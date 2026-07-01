@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Save, Plus, Pencil, Trash2, ArrowLeft, User } from "lucide-react";
-import ImagePicker from "./ImagePicker";
+import ImagePicker from "../admin-core/ImagePicker";
 import { useAuth } from "../context/AuthContext";
 import ArtistBlogEdit from "./ArtistBlogEdit";
-import TagEditor from "./TagEditor";
-import WysiwygEditor from "./WysiwygEditor";
+import TagEditor from "../admin-core/TagEditor";
+import WysiwygEditor from "../admin-core/WysiwygEditor";
 import { toast } from "../utils/toast";
 import { ARTISTS } from "../data";
 import type { Artwork } from "../types";

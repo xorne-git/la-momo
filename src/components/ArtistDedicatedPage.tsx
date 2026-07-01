@@ -7,7 +7,7 @@ import {
   ShieldCheck, Eye, X, ZoomIn, ZoomOut, Maximize2, Minimize2, ArrowUp, Send, Loader2
 } from "lucide-react";
 import ArtistBlog from "./ArtistBlog";
-import InlineEdit from "../admin/InlineEdit";
+import InlineEdit from "../admin-core/InlineEdit";
 import { getDisciplines } from "../utils/tags";
 
 interface ArtistDedicatedPageProps {
