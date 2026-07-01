@@ -1,9 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useMemo } from "react";
 import { ARTISTS } from "../data";
 import { Artist } from "../types";
+import { AnimatePresence, motion } from "motion/react";
 import { Layers, ArrowRight, Hammer, Info, MapPin, X } from "lucide-react";
 import InlineEdit from "../admin-core/InlineEdit";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "../utils/toast";
+import { getDisciplines } from "../utils/tags";
 import { demoMode } from "../utils/demo";
 
 interface HangarMapProps {
@@ -24,156 +27,74 @@ interface MapPoint {
 }
 
 export default function HangarMap({ onArtistSelect }: HangarMapProps) {
-  // Rich set of 10 points scattered across the historical map
-  const MAP_POINTS: MapPoint[] = [
-    {
-      id: "point-1",
-      label: "Atelier 01 — Garance Lemaître",
-      artistId: "artist-1", // Garance Lemaître (Real)
-      artistName: "Garance Lemaître",
-      discipline: "Plasticiens",
-      specialty: "Sculpture Métal Monumentale",
-      avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 26, y: 38 },
-      description: "Travail du fer, de l'acier corten et de la forge lourde. Création de sculptures monumentales habitées par le souffle du feu.",
-      hangarName: "Hangar A — Les Volumes",
-    },
-    {
-      id: "point-2",
-      label: "Atelier 02 — Fonderie d'Art",
-      artistId: "artist-1", // Real
-      artistName: "Antoine de Fondeur",
-      discipline: "Artisans d'art",
-      specialty: "Bronze & Coulée d'Art",
-      avatarUrl: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 18, y: 28 },
-      description: "Atelier traditionnel de fonderie d'art. Moulage d'argile, fonte de bronze à cire perdue et ciselure de précision.",
-      hangarName: "Hangar A — Les Volumes",
-    },
-    {
-      id: "point-3",
-      label: "Atelier 03 — L'Enclume Noire",
-      artistId: "artist-1", // Real
-      artistName: "Jeanne de la Forge",
-      discipline: "Métalliers",
-      specialty: "Forge & Mobilier d'Art",
-      avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 35, y: 45 },
-      description: "Conception de mobilier contemporain brut combinant le chêne centenaire de la région et l'acier forgé patiné.",
-      hangarName: "Hangar A — Les Volumes",
-    },
-    {
-      id: "point-4",
-      label: "Atelier 04 — Nolwenn Dubreuil",
-      artistId: "artist-3", // Nolwenn Dubreuil (Real)
-      artistName: "Nolwenn Dubreuil",
-      discipline: "Artisans d'art",
-      specialty: "Céramique & Grès Sauvage",
-      avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 55, y: 55 },
-      description: "Modelage de porcelaines et grès cuits à haute température. Émaux formulés à partir de cendres de bois locales.",
-      hangarName: "Hangar B — Les Matières",
-    },
-    {
-      id: "point-5",
-      label: "Atelier 05 — Julien Gauthier",
-      artistId: "artist-4", // Julien Gauthier (Real)
-      artistName: "Julien Gauthier",
-      discipline: "Artisans d'art",
-      specialty: "Ébénisterie de Création",
-      avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 48, y: 68 },
-      description: "Sublimation des bois nobles locaux. Créations de pièces uniques magnifiant les fissures et cicatrices naturelles du bois.",
-      hangarName: "Hangar B — Les Matières",
-    },
-    {
-      id: "point-6",
-      label: "Atelier 06 — Lutherie Contemporaine",
-      artistId: "artist-4", // Real
-      artistName: "Lucie Luthier",
-      discipline: "Artisans d'art",
-      specialty: "Violons & Instruments à cordes",
-      avatarUrl: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 62, y: 58 },
-      description: "Conception, réglages acoustiques et restauration d'instruments du quatuor à cordes dans la pure tradition artisanale.",
-      hangarName: "Hangar B — Les Matières",
-    },
-    {
-      id: "point-7",
-      label: "Atelier 07 — Marc-Antoine Kéruzoré",
-      artistId: "artist-2", // Marc-Antoine Kéruzoré (Real)
-      artistName: "Marc-Antoine Kéruzoré",
-      discipline: "Plasticiens",
-      specialty: "Peinture Brutaliste & Goudron",
-      avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 78, y: 25 },
-      description: "Grands formats picturaux explorant les profondeurs du noir à travers des mélanges de goudron sauvage, charbon et lin brut.",
-      hangarName: "Hangar C — Les Couleurs",
-    },
-    {
-      id: "point-8",
-      label: "Atelier 08 — Chambre Claire",
-      artistId: "artist-2", // Real
-      artistName: "Sasha Silver",
-      discipline: "Photographes",
-      specialty: "Argentique & Collodion Humide",
-      avatarUrl: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 70, y: 18 },
-      description: "Laboratoire de photographie d'art spécialisé dans les techniques de tirage du XIXe siècle et les portraits argentiques.",
-      hangarName: "Hangar C — Les Couleurs",
-    },
-    {
-      id: "point-9",
-      label: "Atelier 09 — L'Encre Bleue",
-      artistId: "artist-2", // Real
-      artistName: "Rémi Estampe",
-      discipline: "Sérigraphes",
-      specialty: "Sérigraphie & Gravure d'Art",
-      avatarUrl: "https://images.unsplash.com/photo-1500048993953-d23a436266cf?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 86, y: 30 },
-      description: "Estampes en tirage limité sur papier d'art à fort grammage. Ateliers d'initiation à la gravure sur bois et linoleum.",
-      hangarName: "Hangar C — Les Couleurs",
-    },
-    {
-      id: "point-10",
-      label: "Atelier 10 — Fusion Silice",
-      artistId: "artist-3", // Real
-      artistName: "Elena Souffleuse",
-      discipline: "Artisans d'art",
-      specialty: "Verre Soufflé à la canne",
-      avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-      coordinates: { x: 42, y: 52 },
-      description: "Modelage du verre en fusion à haute température. Création de luminaires et sculptures de verre organiques et fluides.",
-      hangarName: "Hangar B — Les Matières",
+  // Rich set of 10 points with randomized artist assignments
+  const MAP_POINTS = useMemo((): MapPoint[] => {
+    const ids = ["artist-1", "artist-2", "artist-3", "artist-4"];
+    const pool = [...ids, ...ids, ...ids].slice(0, 10);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-  ];
+    const hangars = ["Hangar A — Les Volumes", "Hangar A — Les Volumes", "Hangar A — Les Volumes", "Hangar B — Les Matières", "Hangar B — Les Matières", "Hangar B — Les Matières", "Hangar C — Les Couleurs", "Hangar C — Les Couleurs", "Hangar C — Les Couleurs", "Hangar C — Les Couleurs"];
+    const coords: { x: number; y: number }[] = [
+      { x: 26, y: 38 }, { x: 18, y: 28 }, { x: 35, y: 45 },
+      { x: 55, y: 55 }, { x: 48, y: 68 }, { x: 62, y: 58 },
+      { x: 78, y: 25 }, { x: 70, y: 18 }, { x: 86, y: 30 },
+      { x: 82, y: 36 }
+    ];
+    return pool.map((artistId, i) => {
+      const artist = ARTISTS.find((a) => a.id === artistId);
+      return {
+        id: `point-${i + 1}`,
+        label: `Atelier ${String(i + 1).padStart(2, "0")} — ${artist?.name || ""}`,
+        artistId,
+        artistName: artist?.name || "",
+        discipline: artist?.discipline || "",
+        specialty: artist?.tags?.[0] || "",
+        avatarUrl: artist?.avatarUrl || "",
+        coordinates: coords[i],
+        description: artist?.bio || "",
+        hangarName: hangars[i],
+      };
+    });
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const { isAdmin } = useAuth();
-  const [confirmed, setConfirmed] = useState(false);
-  const confirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  type SpotlightMode = "pinned" | "random";
+  const [mode, setMode] = useState<SpotlightMode>(() => {
+    return (localStorage.getItem("morinerie_spotlight_mode") as SpotlightMode) || "random";
+  });
+
   const doSpotlight = (artist: Artist) => {
     setSpotlightArtist(artist);
     localStorage.setItem("morinerie_spotlight_artist", artist.id);
-    setConfirmed(true);
-    if (confirmTimer.current) clearTimeout(confirmTimer.current);
-    confirmTimer.current = setTimeout(() => setConfirmed(false), 2000);
+    setMode("pinned");
+    localStorage.setItem("morinerie_spotlight_mode", "pinned");
+    toast.success(`${artist.name} mis·e à l'honneur`);
   };
+
   const [spotlightArtist, setSpotlightArtist] = useState<Artist>(() => {
-    // Check localStorage for a pinned artist, otherwise random
     const saved = localStorage.getItem("morinerie_spotlight_artist");
-    if (saved) {
+    if (saved && mode === "pinned") {
       const found = ARTISTS.find((a) => a.id === saved);
       if (found) return found;
     }
+    // Random fallback
     const randomIndex = Math.floor(Math.random() * ARTISTS.length);
     return ARTISTS[randomIndex] || ARTISTS[0];
   });
-  const pickRandomArtist = () => {
+
+  const pickRandomArtist = (showToast = true) => {
+    setMode("random");
+    localStorage.setItem("morinerie_spotlight_mode", "random");
+    localStorage.removeItem("morinerie_spotlight_artist");
     const filtered = ARTISTS.filter((a) => a.id !== spotlightArtist.id);
     const next = filtered[Math.floor(Math.random() * filtered.length)] || ARTISTS[0];
-    doSpotlight(next);
+    setSpotlightArtist(next);
+    if (showToast) toast.info(`🎲 ${next.name} à l'affiche`);
   };
 
   const currentPoint = MAP_POINTS.find((p) => p.id === selectedPointId) || null;
@@ -262,6 +183,18 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
             className="group relative min-h-[450px] w-full bg-brand-steel overflow-hidden border border-brand-dark/10 shadow-md hover:shadow-xl transition-all duration-500 ease-out flex flex-col justify-end cursor-pointer"
             onClick={() => onArtistSelect(spotlightArtist.id)}
           >
+            {/* Mode badge on spotlight card */}
+            {isAdmin && mode === "pinned" && (
+              <div className="absolute top-2 right-2 z-20 bg-brand-rust text-white font-mono text-[8px] uppercase tracking-wider px-1.5 py-0.5 shadow-sm">
+                Épinglé
+              </div>
+            )}
+            {isAdmin && mode === "random" && (
+              <div className="absolute top-2 right-2 z-20 bg-brand-dark/70 text-white font-mono text-[8px] uppercase tracking-wider px-1.5 py-0.5 shadow-sm border border-white/10">
+                Aléatoire
+              </div>
+            )}
+
             {/* Visual Chosen by the Artist (Cover) */}
             <div className="absolute inset-0 w-full h-full bg-brand-dark overflow-hidden">
               <img
@@ -277,16 +210,18 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
             {/* Always-Visible Standard Face Info (At the bottom of the card) */}
             <div className="relative z-10 p-6 space-y-3 transition-all duration-500 group-hover:opacity-0 group-hover:translate-y-4">
               <div className="space-y-1">
-                <div className="flex justify-between items-start font-mono text-[9px] text-white/50 uppercase tracking-widest mb-1.5">
+                <div className="flex items-start font-mono text-[9px] text-white/50 uppercase tracking-widest mb-1.5">
                   <span className="font-bold text-brand-rust flex items-center gap-1.5">
                     <span className="inline-block w-1.5 h-1.5 bg-brand-rust animate-pulse rounded-full" />
                     L'Atelier à l'honneur
                   </span>
-                  <span>COOPÉRATEUR DU MOMENT</span>
                 </div>
-                <span className="inline-block font-mono text-[9px] text-brand-rust uppercase tracking-widest font-bold bg-brand-rust/10 border border-brand-rust/20 px-2 py-0.5">
-                  {spotlightArtist.discipline}
-                </span>
+                {(() => { try { const vt = localStorage.getItem(`morinerie_artist_vignette_tag_${spotlightArtist.id}`); if (vt) return <span className="inline-block font-mono text-[9px] text-brand-light bg-brand-rust border border-brand-rust/30 px-2 py-0.5 uppercase tracking-widest font-bold mb-1">#{vt}</span>; } catch {} return null; })()}
+                <div className="flex flex-wrap gap-1 mb-1">
+                  {getDisciplines(spotlightArtist.id).map((d) => (
+                    <span key={d} className="inline-block font-mono text-[8px] text-brand-light bg-brand-rust/80 border border-brand-rust/30 px-1.5 py-0.5 uppercase tracking-widest">#{d}</span>
+                  ))}
+                </div>
                 <h3 className="font-display font-extrabold text-xl text-brand-light uppercase tracking-wide leading-none mt-1">
                   {spotlightArtist.name}
                 </h3>
@@ -327,9 +262,12 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
                     <h4 className="font-display font-bold text-base text-brand-dark uppercase leading-none mb-0.5">
                       {spotlightArtist.name}
                     </h4>
-                    <span className="font-mono text-[9px] text-brand-rust uppercase tracking-wider font-bold">
-                      {spotlightArtist.discipline}
-                    </span>
+                    {(() => { try { const vt = localStorage.getItem(`morinerie_artist_vignette_tag_${spotlightArtist.id}`); if (vt) return <span className="font-mono text-[9px] text-brand-rust uppercase tracking-wider font-bold block mb-0.5">#{vt}</span>; } catch {} return null; })()}
+                    <div className="flex flex-wrap gap-1 mt-0.5">
+                      {getDisciplines(spotlightArtist.id).map((d) => (
+                        <span key={d} className="font-mono text-[8px] text-brand-light bg-brand-rust/80 border border-brand-rust/30 px-1.5 py-0.5 uppercase tracking-widest">#{d}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -365,7 +303,7 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            doSpotlight(artist);
+                            setSpotlightArtist(artist);
                           }}
                           className={`relative w-8 h-8 shrink-0 overflow-hidden transition-all cursor-pointer rounded-none group/thumb ${
                             isActive 
@@ -409,23 +347,56 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
 
           </div>
 
-          {/* Admin bar — below the artist card, normal flow */}
+          {/* Admin bar — redesigned ergonomics */}
           {isAdmin && (
-            <div className="flex items-center justify-center gap-2 pt-3 pb-1">
-              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); doSpotlight(spotlightArtist); }}
-                className={`inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider px-4 py-2 transition-colors cursor-pointer font-bold ${confirmed ? "bg-emerald-600 text-white" : "bg-brand-rust text-white hover:bg-brand-dark"}`}
+            <div className="pt-3 space-y-3">
+              {/* Mode toggle */}
+              <div className="flex items-center justify-center gap-0 border border-brand-dark/20 rounded-sm overflow-hidden">
+                <button
+                  title="Épingler l'artiste prévisualisé"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); doSpotlight(spotlightArtist); }}
+                  className={`flex-1 font-mono text-[10px] uppercase tracking-wider py-2.5 transition-colors cursor-pointer font-bold ${
+                    mode === "pinned"
+                      ? "bg-brand-rust text-white"
+                      : "bg-brand-light text-brand-gray hover:bg-brand-steel"
+                  }`}
+                >
+                  🎯 À l'honneur
+                </button>
+                <button
+                  title="Sélection aléatoire parmi les résidents"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); pickRandomArtist(false); toast.info("Mode aléatoire activé"); }}
+                  className={`flex-1 font-mono text-[10px] uppercase tracking-wider py-2.5 transition-colors cursor-pointer font-bold ${
+                    mode === "random"
+                      ? "bg-brand-rust text-white"
+                      : "bg-brand-light text-brand-gray hover:bg-brand-steel"
+                  }`}
+                >
+                  🎲 Aléatoire
+                </button>
+              </div>
+
+              {/* Contextual hint */}
+              {mode === "pinned" ? (
+                <p className="text-center font-mono text-[9px] text-brand-gray/60 uppercase tracking-wider leading-relaxed">
+                  Pr&eacute;visualisez un atelier ci-dessous,<br />puis cliquez sur &laquo;&nbsp;&#xc0; l'honneur&nbsp;&raquo;
+                </p>
+              ) : (
+                <span className="block text-center font-mono text-[9px] text-brand-gray/60 uppercase tracking-wider">
+                  Aléatoire — change à chaque visite
+                </span>
+              )}
+            </div>
+          )}
+          {mode === "random" && (
+            <div className="flex justify-center pt-2">
+              <button
+                title="Passer au hasard à un autre artiste"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); pickRandomArtist(false); }}
+                className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-4 py-2 bg-brand-dark text-white hover:bg-brand-dark/80 transition-colors cursor-pointer font-bold"
               >
-                {confirmed ? (
-                  <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg> Mis à l'honneur</>
-                ) : (
-                  "Mettre à l'honneur"
-                )}
-              </button>
-              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); pickRandomArtist(); }}
-                className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider px-4 py-2 bg-brand-dark text-white hover:bg-brand-dark/80 transition-colors cursor-pointer font-bold"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="3" y1="3" x2="9" y2="9"/></svg>
-                Aléatoire
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="3" y1="3" x2="9" y2="9"/></svg>
+                Suivant
               </button>
             </div>
           )}
@@ -498,6 +469,7 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
                     onClick={() => {
                       setSelectedPointId(point.id);
                     }}
+                    onMouseEnter={() => setSelectedPointId(point.id)}
                     className="absolute group z-30 transform -translate-x-1/2 -translate-y-1/2 focus:outline-none cursor-pointer"
                     style={{ left: `${point.coordinates.x}%`, top: `${point.coordinates.y}%` }}
                   >
@@ -542,8 +514,16 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
           </div>
 
           {/* Sibling Details Overlay: Fixed at modal wrapper level. This avoids scrolling layout shifts! */}
-          {currentPoint && (
-            <div className="absolute bottom-6 right-6 left-6 md:left-auto bg-white p-5 md:p-6 shadow-2xl border border-brand-dark/15 z-40 max-w-sm flex flex-col justify-between transition-all duration-300 rounded-sm">
+          <AnimatePresence mode="wait">
+            {currentPoint && (
+            <motion.div
+              key={currentPoint.id}
+              initial={{ opacity: 0, y: 12, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="absolute bottom-6 right-6 left-6 md:left-auto bg-white p-5 md:p-6 shadow-2xl border border-brand-dark/15 z-40 max-w-sm flex flex-col justify-between rounded-sm"
+            >
               
               {/* Popin Close Button */}
               <button
@@ -599,8 +579,9 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
                 <span>Entrer dans l'atelier</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
 
           {/* Footer */}
           <div className="bg-[#fcfbf9] border-t border-brand-dark/10 px-6 py-3.5 flex flex-col md:flex-row justify-between items-center text-[10px] font-mono text-brand-dark/50 gap-2">
@@ -623,4 +604,3 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
     </div>
   );
 }
-
