@@ -4,6 +4,7 @@ import { Artist } from "../types";
 import { Layers, ArrowRight, Hammer, Info, MapPin, X } from "lucide-react";
 import InlineEdit from "../admin-core/InlineEdit";
 import { useAuth } from "../context/AuthContext";
+import { demoMode } from "../utils/demo";
 
 interface HangarMapProps {
   onArtistSelect: (artistId: string) => void;
@@ -210,8 +211,8 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
 
             {/* Clickable Map image preview wrapper */}
             <div 
-              onClick={() => setIsModalOpen(true)}
-              className="relative flex-1 w-full rounded-sm border border-brand-dark/10 overflow-hidden cursor-pointer group-hover:border-brand-rust/50 transition-all duration-300 select-none bg-[#faf8f5] flex items-center justify-center shadow-inner"
+              onClick={() => { if (!demoMode) setIsModalOpen(true); }}
+              className={`relative flex-1 w-full rounded-sm border border-brand-dark/10 overflow-hidden ${demoMode ? "" : "cursor-pointer"} group-hover:border-brand-rust/50 transition-all duration-300 select-none bg-[#faf8f5] flex items-center justify-center shadow-inner`}
             >
               <img
                 src="/images/carte_website.png"
@@ -243,6 +244,7 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
                 <h3 className="font-display font-extrabold text-base text-brand-dark uppercase tracking-tight">Vue générale</h3>
                 <p className="font-sans text-[11px] text-brand-gray">Ouvrir la cartographie interactive complète du site.</p>
               </div>
+              {!demoMode && (
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-brand-rust hover:bg-brand-dark text-white font-mono text-[9px] uppercase tracking-wider px-4 py-2 transition-colors cursor-pointer font-bold rounded-sm shadow-sm"
@@ -250,6 +252,7 @@ export default function HangarMap({ onArtistSelect }: HangarMapProps) {
                 <span>Agrandir le plan</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
+              )}
             </div>
           </div>
 
