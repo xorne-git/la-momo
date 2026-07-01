@@ -321,25 +321,25 @@ export default function Actualites({ onEditClick }: { onEditClick?: () => void }
             </div>
           )}
 
-          {/* Quick Info card for visitors */}
-          <div className="bg-brand-rust/10 border border-brand-rust/20 p-6 mt-6">
-            <h4 className="font-display font-bold text-xs uppercase tracking-widest text-brand-rust mb-2">
-              Suivre le Tiers-Lieu
-            </h4>
-            <p className="font-sans text-brand-dark/80 text-xs leading-relaxed font-light mb-4">
-              Abonnez-vous pour être tenu au courant de nos expositions hors-les-murs et de nos appels à candidatures.
-            </p>
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-brand-rust hover:text-brand-dark font-bold transition-colors"
-            >
-              <span>S'abonner à la newsletter</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-          </div>
-
         </div>
 
+      </div>
+
+      {/* Quick Info card for visitors */}
+      <div className="bg-brand-rust/10 border border-brand-rust/20 p-6 mt-8">
+        <h4 className="font-display font-bold text-xs uppercase tracking-widest text-brand-rust mb-2">
+          Suivre le Tiers-Lieu
+        </h4>
+        <p className="font-sans text-brand-dark/80 text-xs leading-relaxed font-light mb-4">
+          Abonnez-vous pour être tenu au courant de nos expositions hors-les-murs et de nos appels à candidatures.
+        </p>
+        <a
+          href="#contact"
+          className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-brand-rust hover:text-brand-dark font-bold transition-colors"
+        >
+          <span>S'abonner à la newsletter</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </a>
       </div>
     </div>
   );
