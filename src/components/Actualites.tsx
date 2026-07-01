@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, ChevronRight, Calendar, ArrowRight, Tag, Pencil } from "lucide-react";
 import { NewsItem } from "../types";
@@ -50,6 +50,7 @@ export default function Actualites({ onEditClick }: { onEditClick?: () => void }
   const [activeNewsIndex, setActiveNewsIndex] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const detailRef = useRef<HTMLDivElement>(null);
 
   const activeNews = items[activeNewsIndex];
 
@@ -98,6 +99,19 @@ export default function Actualites({ onEditClick }: { onEditClick?: () => void }
     }
   };
 
+  const handleSelectNews = (index: number) => {
+    setActiveNewsIndex(index);
+    // On mobile/tablet, scroll to the detail view after state update
+    if (window.innerWidth < 1024) {
+      requestAnimationFrame(() => {
+        if (!detailRef.current) return;
+        const headerOffset = 64;
+        const top = detailRef.current.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({ top, behavior: "smooth" });
+      });
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-32">
       {/* Section Header */}
@@ -117,17 +131,78 @@ export default function Actualites({ onEditClick }: { onEditClick?: () => void }
 
       {/* Main Interactive Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
+        {/* News Selector: lg:col-span-4 */}
+        <div className="lg:col-span-4 space-y-4">
+          <div className="font-mono text-[11px] tracking-widest text-brand-dark/40 uppercase font-bold px-2">
+            Actualités
+          </div>
+
+          <div className="space-y-3">
+            {items.map((item, index) => {
+              const isActive = index === activeNewsIndex;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleSelectNews(index)}
+                  className={`w-full text-left p-4 transition-all border flex gap-4 cursor-pointer focus:outline-none relative overflow-hidden group ${
+                    isActive
+                      ? "bg-brand-dark border-brand-dark text-brand-light shadow-md"
+                      : "bg-brand-steel/10 border-brand-dark/10 hover:border-brand-rust/50 hover:bg-brand-steel/20 text-brand-dark"
+                  }`}
+                >
+                  {/* Small Thumbnail */}
+                  <div className="w-16 h-16 shrink-0 bg-brand-steel overflow-hidden border border-brand-dark/5 relative">
+                    <img
+                      src={item.images[0]}
+                      alt=""
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+
+                  {/* Text contents */}
+                  <div className="flex flex-col justify-between py-0.5 overflow-hidden">
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={`font-mono text-[9px] uppercase tracking-wider ${isActive ? "text-brand-rust" : "text-brand-rust"}`}>
+                          {item.category}
+                        </span>
+                        <span className="font-mono text-[9px] opacity-60">
+                          {item.date}
+                        </span>
+                      </div>
+                      <h4 className="font-display font-medium text-xs sm:text-sm uppercase tracking-wider line-clamp-1 mt-1 leading-snug">
+                        {item.title}
+                      </h4>
+                    </div>
+                    <p className={`font-sans text-[11px] line-clamp-1 opacity-70 font-light mt-1`}>
+                      {item.subtitle}
+                    </p>
+                  </div>
+
+                  {/* Active highlight side marker */}
+                  {isActive && (
+                    <div className="absolute right-0 top-0 bottom-0 w-1 bg-brand-rust" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+        </div>
+
         {/* Active News Showcase: lg:col-span-8 */}
-        <div 
+        <div
+          ref={detailRef}
           className="lg:col-span-8 bg-brand-steel/30 border border-brand-dark/5 p-4 sm:p-6 shadow-sm"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
-          
+
           {/* Multi-image Slider */}
           <div className="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden bg-brand-dark border border-brand-dark/10 group/slider">
-            
+
             <AnimatePresence mode="wait">
               <motion.img
                 key={`${activeNewsIndex}-${activeImageIndex}`}
@@ -245,65 +320,6 @@ export default function Actualites({ onEditClick }: { onEditClick?: () => void }
               </button>
             </div>
           )}
-        </div>
-
-        {/* Sidebar News Selector: lg:col-span-4 */}
-        <div className="lg:col-span-4 space-y-4">
-          <div className="font-mono text-[11px] tracking-widest text-brand-dark/40 uppercase font-bold px-2">
-            Autres Actualités
-          </div>
-
-          <div className="space-y-3">
-            {items.map((item, index) => {
-              const isActive = index === activeNewsIndex;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveNewsIndex(index)}
-                  className={`w-full text-left p-4 transition-all border flex gap-4 cursor-pointer focus:outline-none relative overflow-hidden group ${
-                    isActive
-                      ? "bg-brand-dark border-brand-dark text-brand-light shadow-md"
-                      : "bg-brand-steel/10 border-brand-dark/10 hover:border-brand-rust/50 hover:bg-brand-steel/20 text-brand-dark"
-                  }`}
-                >
-                  {/* Small Thumbnail */}
-                  <div className="w-16 h-16 shrink-0 bg-brand-steel overflow-hidden border border-brand-dark/5 relative">
-                    <img
-                      src={item.images[0]}
-                      alt=""
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-
-                  {/* Text contents */}
-                  <div className="flex flex-col justify-between py-0.5 overflow-hidden">
-                    <div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className={`font-mono text-[9px] uppercase tracking-wider ${isActive ? "text-brand-rust" : "text-brand-rust"}`}>
-                          {item.category}
-                        </span>
-                        <span className="font-mono text-[9px] opacity-60">
-                          {item.date}
-                        </span>
-                      </div>
-                      <h4 className="font-display font-medium text-xs sm:text-sm uppercase tracking-wider line-clamp-1 mt-1 leading-snug">
-                        {item.title}
-                      </h4>
-                    </div>
-                    <p className={`font-sans text-[11px] line-clamp-1 opacity-70 font-light mt-1`}>
-                      {item.subtitle}
-                    </p>
-                  </div>
-
-                  {/* Active highlight side marker */}
-                  {isActive && (
-                    <div className="absolute right-0 top-0 bottom-0 w-1 bg-brand-rust" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
 
           {/* Quick Info card for visitors */}
           <div className="bg-brand-rust/10 border border-brand-rust/20 p-6 mt-6">
